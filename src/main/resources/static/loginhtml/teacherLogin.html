@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>教师登陆</title>
+    <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+    <meta name="author" content="Vincent Garreau" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" media="screen" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/reset.css"/>
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <script src="../layui/layui.js" charset="utf-8"></script>
+
+</head>
+<body>
+
+<div id="particles-js">
+    <form name="form" action="http://localhost:8080/tecLogin" class="layui-form" method="post">
+        <!--		class layui-form一定要加，不然表单验证用不了-->
+        <div class="login">
+            <div class="login-top-1 ">校内费用报销平台</div>
+            <div class="login-top-2 " >教师登录</div>
+            <div class="login-center clearfix">
+                <div class="login-center-img"><img src="../img/name.png"/></div>
+                <div class="login-center-input">
+                    <input type="text" name="teacher_username" id="un" autocomplete="off" lay-verify="username" placeholder='请输入您的用户名' maxlength="11"/>
+                    <div class="login-center-input-text">用户名</div>
+                </div>
+            </div>
+            <div class="login-center clearfix">
+                <div class="login-center-img"><img src="../img/password.png"/></div>
+                <div class="login-center-input">
+                    <input type="password" name="teacher_pwd" lay-verify="pass" placeholder="请输入您的密码"/>
+                    <div class="login-center-input-text">密码</div>
+                </div>
+            </div>
+            <button  type="submit" class="login-button-1" lay-submit="" lay-filter="formDemo">
+                登陆
+            </button>
+            <input class="login-button-2" onclick="javascrtpt:window.location.href='../registerhtml/teacherRegister.html'" value="注册">
+            <div style="text-align: center;margin-top: 20px;">
+                <a href="http://localhost:8080/loginhtml/studentLogin.html" style="color: #1E9FFF">学生登录</a>
+            </div>
+        </div>
+
+        <div class="sk-rotating-plane"></div>
+    </form>
+</div>
+
+<!-- scripts -->
+<script src="../js/particles.min.js"></script>
+<script src="../js/app.js"></script>
+<script>
+    //注册
+
+    //Demo
+    layui.use(['form','layer','element'], function(){
+        var form = layui.form;
+        form.verify({
+            username: function(value, item){ //value：表单的值、item：表单的DOM对象
+                var x=document.getElementById("un");
+                var reg=RegExp(/ /);
+                console.log(x.value);
+                if(x.value==''){
+                    return '用户名不能为空';
+                }
+                if(!(/^\d+$/.test(value))){
+                    return '用户名只能为数字';
+                }
+                // if (reg.test(x.value)){
+                // 	return '用户名不能含有空格';
+                // }
+                if(x.value.length<6){
+                    return '用户名不能少于6位';
+                }
+                // if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+                // 	return '用户名不能有特殊字符';
+                // }
+                // if(/(^\_)|(\__)|(\_+$)/.test(value)){
+                // 	return '用户名首尾不能出现下划线\'_\'';
+                // }
+
+            }
+            //我们既支持上述函数式的方式，也支持下述数组的形式
+            //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+            ,pass: [
+                /^[\S]{6,12}$/
+                ,'密码必须6到12位，且不能出现空格'
+            ]
+        });
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            //layer.msg(JSON.stringify(data.field));
+            return true;
+        });
+    });
+</script>
+</body>
+</html>

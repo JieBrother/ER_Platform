@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:width="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>学生操作页面</title>
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <script src="../layui/layui.js" charset="utf-8"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+</head>
+<body>
+
+<ul class="layui-nav" style="text-align: center">
+    <li class="layui-nav-item">
+        <p style="font-size: 20px">学生操作页面</p>
+    </li>
+    <li class="layui-nav-item" lay-unselect="" style="float: left">
+        <!--            style="float: left"往左边显示-->
+        <a href="javascript:;">
+            <img src="../img/teacher.jpg" class="layui-nav-img">
+            <span id="me">我</span></a>
+        <dl class="layui-nav-child">
+            <dd>
+                <a href="javascript:modify();" class="">修改密码</a>
+            </dd>
+            <dd><a href="javascript:exit();" class="login-out">退出登录</a></dd>
+        </dl>
+    </li>
+</ul>
+<ul class="layui-nav layui-nav-tree layui-inline" lay-filter="demo">
+    <li class="layui-nav-item layui-nav-itemed">
+        <a href="" onclick="">默认展开</a>
+        <dl class="layui-nav-child">
+            <dd><a href="page/1.html" target="main_self_frame">选项一</a></dd>
+            <dd><a href="page/2.html" target="main_self_frame">选项二</a></dd>
+            <dd><a href="javascript:;">选项三</a></dd>
+            <dd><a href="">跳转项</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item">
+        <a href="page/1.html" target="_blank">解决方案</a>
+        <dl class="layui-nav-child">
+            <dd><a href="">移动模块</a></dd>
+            <dd><a href="">后台模版</a></dd>
+            <dd><a href="">电商平台</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item"><a href="">云市场</a></li>
+    <li class="layui-nav-item"><a href="">社区</a></li>
+</ul>
+<div class="layui-body">
+    <iframe style="width: 100% ; margin-top: 50px;min-height: 580px;" scrolling="auto" name="main_self_frame"
+            frameborder="0"></iframe>
+</div>
+
+<!--修改密码弹出层-->
+<div style="display: none;" id="aaa">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">原密码</label>
+            <div class="layui-input-block">
+                <input id="oldPassword" type="password" name="oldPassword" required  lay-verify="required" autofocus placeholder="请输入原密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-block">
+                <input id="newPassword" type="password" name="newPassword" required  lay-verify="required" placeholder="请输入新密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">确认密码</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input id="re_newPassword" type="password" name="re_newPassword" required  lay-verify="required" placeholder="请重新输入新密码" autocomplete="off" class="layui-input">-->
+<!--            </div>-->
+<!--        </div>-->
+        <button  type="submit" class="login-button-1" lay-submit="" lay-filter="modifyPwd" onclick="">
+            提交
+        </button>
+    </form>
+</div>
+
+<script>
+    layui.use(['upload', 'layer', 'element', 'jquery', 'form'], function () {
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+        var layer = layui.layer;
+        var cookie = document.cookie;
+        var cook_key = "name" + "=";
+        var name = document.cookie.split(cook_key);
+        var $ = layui.jquery;//1
+        var form = layui.form;
+        layer.msg("welcome " + name[1]);
+        document.getElementById("me").innerHTML = name[1];
+
+        //监听导航点击
+        element.on('nav(demo)', function (elem) {
+                console.log(elem)
+                layer.msg(elem.text());
+            }
+        )
+
+        //初始化就绪Cookie
+        layer.ready(function () {
+            $.ajax({
+                url: "http://localhost:8080/getStudentCookie",
+                success(result) {
+                    if (result != '') {
+                        $("#me").text(result);
+                    } else {
+                        window.location.href = '../loginhtml/studentLogin.html';
+                    }
+                }
+            });
+        });
+
+        //退出登录
+        window.exit = function () {
+            layer.confirm('确认退出登录吗？', function (index) {
+                $.ajax({
+                    url: "http://localhost:8080/delStudentCookie",
+                    type: "get",
+                    success(res) {
+                        if (res == "success") {
+                            window.location.href = '../loginhtml/studentLogin.html';
+                        } else {
+                            window.location.href = '../loginhtml/studentLogin.html';
+                        }
+                    }
+                });
+            });
+        }
+
+        //修改密码
+        window.modify = function() {
+            layer.open({
+                type:1,
+                title: '修改密码',
+                content: $('#aaa')
+            });
+        }
+        // window.check = function(form){
+        //     if (((form.newPassword.value.length<6)||(form.newPassword.value.length>12))&&(form.newPassword.value!=""))
+        //     {
+        //         alert("密码必须是6-12位的字母或数字！");
+        //         return false;
+        //     }
+        //     else if (form.newPassword.value!=form.re_newPassword.value)
+        //     {
+        //         alert("两次输入的密码不同！");
+        //         return false;
+        //     }
+        //     else if (form.newPassword.value=="")
+        //     {
+        //         alert("用户密码不能为空！");
+        //         return false;
+        //     }
+        //     else return true;
+        // }
+        form.on('submit(modifyPwd)',function (data) {
+            layer.msg(JSON.stringify(data.field));
+            $.ajax({
+                url:'http://localhost:8080/modifyPwd',
+                type:'post',
+                data:data.field,
+                success(res){
+                    if(res=="success"){
+                        layer.closeAll();
+                        layer.msg("密码修改成功");
+                        window.location.href='../loginhtml/studentLogin.html'
+                    }else {
+                        layer.msg("密码修改失败");
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>
